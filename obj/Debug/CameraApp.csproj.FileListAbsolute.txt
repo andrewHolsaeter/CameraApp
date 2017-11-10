@@ -1,0 +1,11 @@
+c:\users\hols\documents\visual studio 2017\Projects\CameraApp\bin\Debug\CameraApp.exe.config
+c:\users\hols\documents\visual studio 2017\Projects\CameraApp\bin\Debug\CameraApp.exe
+c:\users\hols\documents\visual studio 2017\Projects\CameraApp\bin\Debug\CameraApp.pdb
+c:\users\hols\documents\visual studio 2017\Projects\CameraApp\bin\Debug\nikoncswrapper.dll
+c:\users\hols\documents\visual studio 2017\Projects\CameraApp\bin\Debug\nikoncswrapper.pdb
+c:\users\hols\documents\visual studio 2017\Projects\CameraApp\obj\Debug\CameraApp.csprojResolveAssemblyReference.cache
+c:\users\hols\documents\visual studio 2017\Projects\CameraApp\obj\Debug\CameraApp.Form1.resources
+c:\users\hols\documents\visual studio 2017\Projects\CameraApp\obj\Debug\CameraApp.Properties.Resources.resources
+c:\users\hols\documents\visual studio 2017\Projects\CameraApp\obj\Debug\CameraApp.csproj.GenerateResource.Cache
+c:\users\hols\documents\visual studio 2017\Projects\CameraApp\obj\Debug\CameraApp.exe
+c:\users\hols\documents\visual studio 2017\Projects\CameraApp\obj\Debug\CameraApp.pdb
