@@ -41,31 +41,34 @@ namespace CameraApp
             stepperTime: 0
             );
         }
+        
         public void parseStepper(string completedBuffer)
         {
             double[] data = new double[2];
             string[] stepperInString = completedBuffer.Split('y');
             if (stepperInString.Length != 3) { return; }
-            // we ignore the 17th, it is always empty           
+            // we ignore the 3rd, it is always empty           
             for (int k = 0; k < 2; k++)
             {
                 Double.TryParse(stepperInString[k], out data[k]);
             }
+            Int32.TryParse(stepperInString[0],out int stepperCommand);          
             var stepperData = new StepperData();
             //implement switch for sendType enum
-            switch (data[0])
+            switch (stepperCommand)
             {
-                case 1:
+                case (int)SendType.STATUS:
                     stepperData.stepperStatus = data[1];
                     /*
                     stepperData = new StepperData(stepperPosition: data[0],stepperTime: data[1]);
                     Interlocked.Exchange(ref ringPushIdx, (ringPushIdx + 1) & 3);
-                    dataRing[(ringPushIdx + 1) & 3] = stepperData;
+                    dataRing[(ringPushIdx + 1) & 3] = stepperData; 
                     */
                     break;
               
             }
-
+           
+                  
 
         }
         internal SerialPortReceiver getReceiver(Action<String> p)
@@ -73,12 +76,13 @@ namespace CameraApp
             return new SerialPortReceiver(serialPortStepperMotor, p);
         }
 
-        private readonly StepperData[] dataRing = new StepperData[4];
+        private readonly StepperData[] dataRing = new StepperData[3];
         private int ringPushIdx;
 
-        public StepperData getData()
+        public StepperData getData(SendType data)
         {
-            return dataRing[ringPushIdx];
+            int index = (int)(data);
+            return dataRing[index];
         }
 
         public void reopenPort()
