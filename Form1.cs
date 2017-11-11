@@ -40,6 +40,7 @@ namespace CameraApp
         Stopwatch timer = new Stopwatch();
 
         Stepper stepperMotor = null;
+        //StepperData stepperData = null;
 
         public Form1()
         {
@@ -64,6 +65,7 @@ namespace CameraApp
             manager = new NikonManager("Type0004.md3");
             manager.DeviceAdded += new DeviceAddedDelegate(manager_DeviceAdded);
             manager.DeviceRemoved += new DeviceRemovedDelegate(manager_DeviceRemoved);
+            
 
             
             //initiliaze timer for for timelapse
@@ -71,15 +73,17 @@ namespace CameraApp
             timelapseTimer.Tick += new EventHandler(timelapseTimer_Tick);
             timelapseTimer.Enabled = false;
 
-            if (stepperMotor == null)
-            {
-                stepperMotor = new Stepper("COM3");
-                stepperReceiver = stepperMotor.getReceiver((string s) => stepperMotor.parseStepper(s));
-            }
+            //initiliaze serial port for stepper motor
+            string[] serialPorts = System.IO.Ports.SerialPort.GetPortNames();
+            comboBoxStepperPort.Items.AddRange(serialPorts);
+            comboBoxStepperPort.SelectedIndex = comboBoxStepperPort.FindStringExact("COM3");
+
+
 
 
 
         }
+
         private SerialPortReceiver stepperReceiver;
         private void timelapseTimer_Tick(object sender, EventArgs e)
         {
@@ -110,7 +114,7 @@ namespace CameraApp
                 NikonEnum shutterspeed = device.GetEnum(eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed);
                 int batterylevel = (int)device.GetInteger(eNkMAIDCapability.kNkMAIDCapability_BatteryLevel);
 
-                StepperData s = stepperMotor.getData();
+                StepperData s = stepperMotor.getData(SendType.STATUS);
                 
                 progressBar1.Value = Convert.ToInt32(batterylevel);
                 labelBatteryLevel.Text = batterylevel.ToString() + "%";
@@ -159,7 +163,7 @@ namespace CameraApp
             //Hook up device capture events
             device.ImageReady += new ImageReadyDelegate(device_ImageReady);
             device.CaptureComplete += new CaptureCompleteDelegate(device_CaptureComplete);
-
+            device.CapabilityValueChanged += new CapabilityChangedDelegate(device_CapValueChange);
             //this will writre to sd card, computer or both
             device.SetUnsigned(eNkMAIDCapability.kNkMAIDCapability_SaveMedia,
             (uint)eNkMAIDSaveMedia.kNkMAIDSaveMedia_SDRAM);
@@ -167,6 +171,13 @@ namespace CameraApp
             screenRefreshTimer.Start();
             
         }
+        int capValueCounter = 0;
+        private void device_CapValueChange(NikonDevice sender, eNkMAIDCapability capability)
+        {
+            capValueCounter++;
+            MessageBox.Show(capValueCounter.ToString());
+        }
+
         void manager_DeviceRemoved(NikonManager sender, NikonDevice device)
         {
             this.device = null;
@@ -226,7 +237,7 @@ namespace CameraApp
             {
                 //3; 1000; 1; 2000;
                 //if moving time lapse
-                stepperMotor.move(200, "1", 1000);
+                stepperMotor.move(1000, "1", 1000);
 
             }
             //re-enable buttons
@@ -245,10 +256,10 @@ namespace CameraApp
 
             ToggleButtons(false);
 
-            if (stepperData.ismoving)
+            /*if (stepperData.ismoving)
             {
                 return;
-            }
+            }*/
             try
             {
                 device.Capture();
@@ -336,6 +347,16 @@ namespace CameraApp
         private void buttonTest_Click(object sender, EventArgs e)
         {
             stepperMotor.move(1000, "1", 500);
+        }
+
+        private void buttonOpenPorts_Click(object sender, EventArgs e)
+        {
+            if (stepperMotor == null)
+            {
+                stepperMotor = new Stepper("COM3");
+                stepperReceiver = stepperMotor.getReceiver((string s) => stepperMotor.parseStepper(s));
+                buttonOpenPorts.Enabled = false;
+            }
         }
     }
 

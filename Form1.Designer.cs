@@ -43,6 +43,8 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.labelBatteryLevel = new System.Windows.Forms.Label();
             this.buttonTest = new System.Windows.Forms.Button();
+            this.comboBoxStepperPort = new System.Windows.Forms.ComboBox();
+            this.buttonOpenPorts = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -187,11 +189,32 @@
             this.buttonTest.UseVisualStyleBackColor = true;
             this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
             // 
+            // comboBoxStepperPort
+            // 
+            this.comboBoxStepperPort.FormattingEnabled = true;
+            this.comboBoxStepperPort.Location = new System.Drawing.Point(130, 27);
+            this.comboBoxStepperPort.Name = "comboBoxStepperPort";
+            this.comboBoxStepperPort.Size = new System.Drawing.Size(239, 39);
+            this.comboBoxStepperPort.TabIndex = 18;
+            // 
+            // buttonOpenPorts
+            // 
+            this.buttonOpenPorts.Location = new System.Drawing.Point(8, 27);
+            this.buttonOpenPorts.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonOpenPorts.Name = "buttonOpenPorts";
+            this.buttonOpenPorts.Size = new System.Drawing.Size(95, 39);
+            this.buttonOpenPorts.TabIndex = 19;
+            this.buttonOpenPorts.Text = "Open";
+            this.buttonOpenPorts.UseVisualStyleBackColor = true;
+            this.buttonOpenPorts.Click += new System.EventHandler(this.buttonOpenPorts_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(3402, 1435);
+            this.ClientSize = new System.Drawing.Size(3402, 1395);
+            this.Controls.Add(this.buttonOpenPorts);
+            this.Controls.Add(this.comboBoxStepperPort);
             this.Controls.Add(this.buttonTest);
             this.Controls.Add(this.labelBatteryLevel);
             this.Controls.Add(this.progressBar1);
@@ -232,6 +255,8 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label labelBatteryLevel;
         private System.Windows.Forms.Button buttonTest;
+        private System.Windows.Forms.ComboBox comboBoxStepperPort;
+        private System.Windows.Forms.Button buttonOpenPorts;
     }
 
 }
