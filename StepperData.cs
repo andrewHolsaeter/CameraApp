@@ -10,12 +10,12 @@ namespace CameraApp
     {
         public double stepperPosition { get; set; }
         public double stepperTime { get; set; }
-        public double stepperStatus { get; set; }
+        public int stepperStatus { get; set; }
 
         //public readonly enum moving;
 
         public StepperData(
-            double stepperStatus,
+            int stepperStatus,
             double stepperPosition,
             double stepperTime
             )

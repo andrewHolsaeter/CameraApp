@@ -113,9 +113,9 @@ namespace CameraApp
                 float exposure = (float)device.GetFloat(eNkMAIDCapability.kNkMAIDCapability_ExposureStatus);
                 NikonEnum shutterspeed = device.GetEnum(eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed);
                 int batterylevel = (int)device.GetInteger(eNkMAIDCapability.kNkMAIDCapability_BatteryLevel);
-
-                StepperData s = stepperMotor.getData(SendType.STATUS);
                 
+                StepperData s = stepperMotor.getData();
+                int status = s.stepperStatus;
                 progressBar1.Value = Convert.ToInt32(batterylevel);
                 labelBatteryLevel.Text = batterylevel.ToString() + "%";
                 textBoxStepper.Text = s.stepperStatus.ToString();
@@ -125,7 +125,7 @@ namespace CameraApp
             }
             catch
             {
-                MessageBox.Show("Unable to get data");
+               // MessageBox.Show("Unable to get data");
             }
         }
 
@@ -174,8 +174,9 @@ namespace CameraApp
         int capValueCounter = 0;
         private void device_CapValueChange(NikonDevice sender, eNkMAIDCapability capability)
         {
+            string cap = capability.ToString();
             capValueCounter++;
-            MessageBox.Show(capValueCounter.ToString());
+            //MessageBox.Show(capValueCounter.ToString());
         }
 
         void manager_DeviceRemoved(NikonManager sender, NikonDevice device)

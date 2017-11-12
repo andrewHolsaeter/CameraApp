@@ -22,6 +22,7 @@ namespace CameraApp
         public void SerialDataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
             string data = serialPort.ReadExisting();
+            //x = SOT; Y = delim; Z = EOT
             foreach (char c in data)
             {
                 if (state == 0 && c == 'd')
