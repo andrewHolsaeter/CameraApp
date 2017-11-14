@@ -17,6 +17,7 @@ using System.IO.Ports;
 
 
 
+
 namespace CameraApp
 {
     public partial class Form1 : Form
@@ -40,7 +41,10 @@ namespace CameraApp
         Stopwatch timer = new Stopwatch();
 
         Stepper stepperMotor = null;
+        StepperData stepperMotorData;
         //StepperData stepperData = null;
+
+        private Timer testTimer;
 
         public Form1()
         {
@@ -50,7 +54,7 @@ namespace CameraApp
             
             //Disable buttons
             ToggleButtons(false);
-
+            
             // Initialize the live view timer
             liveViewTimer = new Timer();
             liveViewTimer.Tick += new EventHandler(liveViewTimer_Tick);
@@ -66,8 +70,6 @@ namespace CameraApp
             manager.DeviceAdded += new DeviceAddedDelegate(manager_DeviceAdded);
             manager.DeviceRemoved += new DeviceRemovedDelegate(manager_DeviceRemoved);
             
-
-            
             //initiliaze timer for for timelapse
             timelapseTimer = new Timer();
             timelapseTimer.Tick += new EventHandler(timelapseTimer_Tick);
@@ -78,13 +80,24 @@ namespace CameraApp
             comboBoxStepperPort.Items.AddRange(serialPorts);
             comboBoxStepperPort.SelectedIndex = comboBoxStepperPort.FindStringExact("COM3");
 
-
-
+            //initialize test timer
+            testTimer = new Timer();
+            testTimer.Tick += new EventHandler(testRefreshTimer_Tick);
+            testTimer.Enabled = false;
+            
 
 
         }
 
+        private void testRefreshTimer_Tick(object sender, EventArgs e)
+        {
+            string status = stepperMotor.status;
+            bool moving = stepperMotor.isMoving;
+            textBoxStepper.Text = status;
+        }
+
         private SerialPortReceiver stepperReceiver;
+        
         private void timelapseTimer_Tick(object sender, EventArgs e)
         {
             //check to see if number of pictures has been reached
@@ -113,12 +126,13 @@ namespace CameraApp
                 float exposure = (float)device.GetFloat(eNkMAIDCapability.kNkMAIDCapability_ExposureStatus);
                 NikonEnum shutterspeed = device.GetEnum(eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed);
                 int batterylevel = (int)device.GetInteger(eNkMAIDCapability.kNkMAIDCapability_BatteryLevel);
+
+                string status = stepperMotor.status;
+                bool moving = stepperMotor.isMoving;
                 
-                StepperData s = stepperMotor.getData();
-                int status = s.stepperStatus;
                 progressBar1.Value = Convert.ToInt32(batterylevel);
                 labelBatteryLevel.Text = batterylevel.ToString() + "%";
-                textBoxStepper.Text = s.stepperStatus.ToString();
+                textBoxStepper.Text = status;
                 textBoxShutterSpeed.Text = shutterspeed.ToString();
                 textBoxAperature.Text = aperture.ToString();
                 textBoxEV.Text = exposure.ToString();
@@ -354,9 +368,12 @@ namespace CameraApp
         {
             if (stepperMotor == null)
             {
-                stepperMotor = new Stepper("COM3");
+                stepperMotor = new Stepper("COM3");              
                 stepperReceiver = stepperMotor.getReceiver((string s) => stepperMotor.parseStepper(s));
+                stepperMotorData = stepperMotor.getDataSet();
                 buttonOpenPorts.Enabled = false;
+                testTimer.Enabled = true;
+                testTimer.Interval = 200;
             }
         }
     }
