@@ -288,6 +288,7 @@ void ReceiveData()
 			tmpdirection = ActuatorDirectionCommand::UP;
 			break;
 		case commandType::MOVE:
+			//3;distance;direction (1 or 2);speed;
 			delim2Pos = read.indexOf(';', delim1Pos + 1);
 			if (delim2Pos == -1) {
 				return;  // panic
