@@ -35,16 +35,11 @@ namespace CameraApp
     public class Stepper
     {
         public bool isMoving { get; private set; }
-        public double _position { get; private set; }
-        private System.IO.Ports.SerialPort serialPortStepperMotor;
-        private readonly StepperData[] dataRing = new StepperData[3];
-        private int ringPushIdx;
-        StepperData stepperMotorData;
-
+        public double position { get; private set; }
         public string status { get; private set; }
 
+        private System.IO.Ports.SerialPort serialPortStepperMotor;
 
-        //stepperDataSet.Tables.Add(stepperTable);
         public Stepper(string serialPortStepperString)
         {
             this.serialPortStepperMotor = new System.IO.Ports.SerialPort(serialPortStepperString, 9600); //changing this
@@ -52,14 +47,8 @@ namespace CameraApp
             serialPortStepperMotor.DtrEnable = true;
             serialPortStepperMotor.DtrEnable = false;
             status = "created";
-
-             stepperMotorData = new StepperData();
         }
-        internal StepperData getDataSet()
-        {
-            return new StepperData(stepperMotorData, 1, 5.0);
-        }
-        public void updateDataSet(SendType sendtype, double data)
+        public void updateData(SendType sendtype, double data)
         {
             int stepperCommand = (int)sendtype;
             switch (stepperCommand)
@@ -83,18 +72,11 @@ namespace CameraApp
                     }
                     break;
                 case (int)SendType.POSITION:
-                    _position = data;
+                    position = data;
                     break;
                 case (int)SendType.STEPPERCOUNTER:
                     //to do
-                    break;
-                    /*
-                    stepperData = new StepperData(stepperPosition: data[0],stepperTime: data[1]);
-                    Interlocked.Exchange(ref ringPushIdx, (ringPushIdx + 1) & 3);
-                    dataRing[(ringPushIdx + 1) & 3] = stepperData; 
-                    */
-                   
-
+                    break;      
             }
 
         }
@@ -109,7 +91,7 @@ namespace CameraApp
                 Double.TryParse(stepperInString[k], out data[k]);
             }
             Int32.TryParse(stepperInString[0],out int stepperCommand);
-            updateDataSet((SendType)data[0], data[1]);
+            updateData((SendType)data[0], data[1]);
                      
         }
         internal SerialPortReceiver getReceiver(Action<String> p)
@@ -122,9 +104,7 @@ namespace CameraApp
             StepperData s = new StepperData();
             return s; 
         }
-        */
-
-        
+        */     
         public void reopenPort()
         {
             if (!serialPortStepperMotor.IsOpen)

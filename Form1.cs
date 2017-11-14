@@ -26,6 +26,7 @@ namespace CameraApp
         private NikonDevice device;
         private Timer liveViewTimer;
         private Timer screenRefreshTimer;
+        private SerialPortReceiver stepperReceiver;
 
         int appender = 0;
         string temppath = @"C:\Users\hols\Desktop\tmp.jpg";
@@ -41,8 +42,6 @@ namespace CameraApp
         Stopwatch timer = new Stopwatch();
 
         Stepper stepperMotor = null;
-        StepperData stepperMotorData;
-        //StepperData stepperData = null;
 
         private Timer testTimer;
 
@@ -84,9 +83,6 @@ namespace CameraApp
             testTimer = new Timer();
             testTimer.Tick += new EventHandler(testRefreshTimer_Tick);
             testTimer.Enabled = false;
-            
-
-
         }
 
         private void testRefreshTimer_Tick(object sender, EventArgs e)
@@ -96,7 +92,6 @@ namespace CameraApp
             textBoxStepper.Text = status;
         }
 
-        private SerialPortReceiver stepperReceiver;
         
         private void timelapseTimer_Tick(object sender, EventArgs e)
         {
@@ -370,7 +365,6 @@ namespace CameraApp
             {
                 stepperMotor = new Stepper("COM3");              
                 stepperReceiver = stepperMotor.getReceiver((string s) => stepperMotor.parseStepper(s));
-                stepperMotorData = stepperMotor.getDataSet();
                 buttonOpenPorts.Enabled = false;
                 testTimer.Enabled = true;
                 testTimer.Interval = 200;
