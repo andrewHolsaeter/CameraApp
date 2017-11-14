@@ -50,6 +50,7 @@
             this.textBoxDistance = new System.Windows.Forms.TextBox();
             this.textBoxSpeed = new System.Windows.Forms.TextBox();
             this.comboBoxDirection = new System.Windows.Forms.ComboBox();
+            this.textBoxPosition = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -267,11 +268,21 @@
             this.comboBoxDirection.Size = new System.Drawing.Size(190, 39);
             this.comboBoxDirection.TabIndex = 24;
             // 
+            // textBoxPosition
+            // 
+            this.textBoxPosition.Enabled = false;
+            this.textBoxPosition.Location = new System.Drawing.Point(230, 1029);
+            this.textBoxPosition.Margin = new System.Windows.Forms.Padding(0);
+            this.textBoxPosition.Name = "textBoxPosition";
+            this.textBoxPosition.Size = new System.Drawing.Size(190, 38);
+            this.textBoxPosition.TabIndex = 25;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2305, 1164);
+            this.Controls.Add(this.textBoxPosition);
             this.Controls.Add(this.comboBoxDirection);
             this.Controls.Add(this.textBoxSpeed);
             this.Controls.Add(this.textBoxDistance);
@@ -326,6 +337,7 @@
         private System.Windows.Forms.TextBox textBoxDistance;
         private System.Windows.Forms.TextBox textBoxSpeed;
         private System.Windows.Forms.ComboBox comboBoxDirection;
+        private System.Windows.Forms.TextBox textBoxPosition;
     }
 
 }

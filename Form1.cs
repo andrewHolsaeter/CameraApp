@@ -107,9 +107,18 @@ namespace CameraApp
 
         private void testRefreshTimer_Tick(object sender, EventArgs e)
         {
+            if (stepperMotor == null) return;
             string status = stepperMotor.status;
             bool moving = stepperMotor.isMoving;
             textBoxStepper.Text = status;
+            textBoxPosition.Text = stepperMotor.position.ToString();
+            if (!timeLapseActive)
+            {
+                if (!moving)
+                {
+                    buttonTest.Enabled = true;
+                }
+            }
         }
 
         
@@ -135,27 +144,7 @@ namespace CameraApp
         }
 
         private void screenRefreshTimer_Tick(object sender, EventArgs e)
-        {
-            if(stepperMotor != null)
-            {
-                try
-                {
-                    string status = stepperMotor.status;
-                    bool moving = stepperMotor.isMoving;
-                    textBoxStepper.Text = status;
-                    if (!timeLapseActive)
-                    {
-                        if (!moving)
-                        {
-                            buttonTest.Enabled = true;
-                        }
-                    }
-                }
-                catch
-                {
-
-                }
-            }
+        {           
             try
             {
                 NikonEnum aperture = device.GetEnum(eNkMAIDCapability.kNkMAIDCapability_Aperture);
@@ -217,8 +206,12 @@ namespace CameraApp
             device.SetUnsigned(eNkMAIDCapability.kNkMAIDCapability_SaveMedia,
             (uint)eNkMAIDSaveMedia.kNkMAIDSaveMedia_SDRAM);
 
+
+            NikonRange r = device.GetRange(eNkMAIDCapability.kNkMAIDCapability_Aperture);
             //get mode
-        
+            textBoxCameraMode.Text = r.Value.ToString();
+            //textBoxCameraMode.Text = r.Max.ToString();
+
             screenRefreshTimer.Start();
             
         }

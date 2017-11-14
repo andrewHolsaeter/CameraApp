@@ -1,4 +1,7 @@
+#include <QueueArray.h>
+
 #pragma region Pin Constants
+
 const int direction_wire1 = 3; 
 
 const int step_wire1 = 5;   
@@ -20,6 +23,7 @@ enum sendType {
 };
 sendType sendData;
 
+QueueArray <sendType> queue;
 
 char delim = ':';
 enum commandType {
@@ -95,6 +99,8 @@ void moveDistance(float steps, ActuatorDirectionCommand dir, unsigned int freq)
 	if (!_isSetup) return;
 	_StepCounter = steps * 2.0;
 	_direction = dir;
+	sendStuff = true;
+	queue.enqueue(sendType::DIRECTION); //direction not as important so only need to flag a send in here
 	switch (dir) {
 	case ActuatorDirectionCommand::UP:
 		digitalWrite(_directionPin, HIGH);
@@ -119,7 +125,8 @@ void stepInterrupt() {
 			_moving = false;
 			//let the sender in main loop now what type it needs to send
 			//maybe put an if statement checking if sendType is open (dequeue or pop)
-			sendData = sendType::STATUS;
+			queue.enqueue(sendType::STATUS);
+			//sendData = sendType::STATUS;
 			sendStuff = true;
 		}
 		// don't do anything
@@ -129,7 +136,8 @@ void stepInterrupt() {
 		if (_moving == false) {
 			_moving = true;
 			//let the sender in main loop now what type it needs to send
-			sendData = sendType::STATUS;
+			queue.enqueue(sendType::STATUS);
+			//sendData = sendType::STATUS;
 			sendStuff = true;
 		}
 		//insert check of endstop
@@ -138,11 +146,13 @@ void stepInterrupt() {
 		if (_direction == UP)
 		{
 			//raising
-			_position = _position - (0.5 / STEPS_PER_ROTATION); //dividing by 2 because everytime we enter the interrupt it only executes half a pulse
+			_position = _position - 0.5; //dividing by 2 because everytime we enter the interrupt it only executes half a pulse
+			//_position = _position - (0.5 / STEPS_PER_ROTATION); //dividing by 2 because everytime we enter the interrupt it only executes half a pulse
 		}
 		else if (_direction == DOWN)
 		{
 			//lowering
+			_position = _position + 0.5; //dividing by 2 because everytime we enter the interrupt it only executes half a pulse
 			_position = _position + (0.5 / STEPS_PER_ROTATION); //dividing by 2 because everytime we enter the interrupt it only executes half a pulse
 		}
 	}
@@ -225,7 +235,7 @@ void loop() {
 
 		if (Command == commandType::MOVE) //move distance
 		{
-			enableStepper = true;
+			enableStepper = false;
 			if (cmdSpeed < 2500 && cmdSpeed >= 1) {
 				freq = cmdSpeed;
 				enableStepper = true;
@@ -237,34 +247,19 @@ void loop() {
 		else
 		{
 			Error = errorTypes::BAD_COMMAND;
-			//sendData();
-			//Serial.flush();
 		}
 	}
 
+	//send stuff whenever you get a chance
 	if (sendStuff == true) {
-		//should probably implement some sort of queue, maybe an if before every assignment of
-		sendStuff = false;
-		Serial.print("x");
-		Serial.print(sendData);
-		Serial.print("y");
-		switch (sendData) {
-		case sendType::STATUS:
-			Serial.print(act[0].getStatus());
-			break;
-		case sendType::POSITION:
-			Serial.print(act[0].getPosition());
-			break;
-		case sendType::DIRECTION:
-			Serial.print(act[0].getDirection());
-			break;
-		case sendType::STEPPERCOUNTER:
-			Serial.print(act[0].getStepCounter());
-			break;
-		}
-		Serial.print("y");
-		Serial.println("z");
-		sendData = sendType::NONE;
+		SendData();
+	}
+
+	//send positions when moving
+	if (act[0].getStatus()) {
+		queue.enqueue(sendType::POSITION);
+		//queue.enqueue(sendType::STEPPERCOUNTER);
+		sendStuff = true;
 	}
 }
 
@@ -278,6 +273,35 @@ void Calibrate()
 			enableStepper = false;
 			//Mode = Modes::STOPPED;
 		}
+	}
+	act[0].resetSteppers();
+}
+void SendData()
+{
+	//should probably implement some sort of queue, maybe an if before every assignment of
+	sendData = queue.dequeue();
+	Serial.print("x");
+	Serial.print(sendData);
+	Serial.print("y");
+	switch (sendData) {
+	case sendType::STATUS:
+		Serial.print(act[0].getStatus());
+		break;
+	case sendType::POSITION:
+		Serial.print(act[0].getPosition());
+		break;
+	case sendType::DIRECTION:
+		Serial.print(act[0].getDirection());
+		break;
+	case sendType::STEPPERCOUNTER:
+		Serial.print(act[0].getStepCounter());
+		break;
+	}
+	Serial.print("y");
+	Serial.println("z");
+	if (queue.isEmpty()) {
+		sendStuff = false;
+		sendData = sendType::NONE;
 	}
 }
 
