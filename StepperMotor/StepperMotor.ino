@@ -114,6 +114,7 @@ void stepInterrupt() {
 	if (_StepCounter <= 0)
 	{
 		_StepCounter = 0;
+		//check to see if this just happened
 		if (_moving == true) {
 			_moving = false;
 			//let the sender in main loop now what type it needs to send
@@ -124,13 +125,14 @@ void stepInterrupt() {
 		// don't do anything
 	}
 	else {
+		//check to see if the command was just sent
 		if (_moving == false) {
 			_moving = true;
 			//let the sender in main loop now what type it needs to send
 			sendData = sendType::STATUS;
 			sendStuff = true;
 		}
-
+		//insert check of endstop
 		digitalWrite(_pulsePin, _step_wire_on = !_step_wire_on);
 		_StepCounter--;
 		if (_direction == UP)
@@ -263,6 +265,19 @@ void loop() {
 		Serial.print("y");
 		Serial.println("z");
 		sendData = sendType::NONE;
+	}
+}
+
+void Calibrate()
+{
+	//need to figure out way to mount endstops first
+	//move like 10 steps at a time
+	if (Serial.available()) {
+		ReceiveData();
+		if (Command == commandType::STOP) {
+			enableStepper = false;
+			//Mode = Modes::STOPPED;
+		}
 	}
 }
 

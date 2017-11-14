@@ -118,7 +118,7 @@ namespace CameraApp
             }
         }
 
-        public void move(double distance, string direction, double speed)
+        public void move(double distance, int direction, double speed)
         {
             //if (!Double.TryParse(direction, out dir)) return;
             int command = (int)CommandType.MOVE;

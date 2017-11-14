@@ -17,12 +17,14 @@ using System.IO.Ports;
 
 //to do:
 //add button to stop (stepper and timelapse)
-//add sender to image ready (timelapse or regular capture)
+//get screenSize and adjust display off of that
 //Add option to name folder for timelapses and create folder and name photofiles that + appender
 //check if that option is already existing to prevent overwrite
 //make file to store number of captures already existing, then find max of that, and append from there for captures
 //find way to get current camera mode
 //add ways to manually set aperature, shutterspeed, iso etc dependent on current camera mode...
+//calibrate slider (need functioning end stops first)
+// -move one direction. Once End has been hit, move the other direction until other stop hit. Send steps it too.
 
 
 namespace CameraApp
@@ -35,6 +37,7 @@ namespace CameraApp
         private Timer screenRefreshTimer;
         private SerialPortReceiver stepperReceiver;
 
+        //file save stuff
         int captureAppender = 0;
         int timelapseAppender = 0;
         string temppath = @"C:\Users\hols\Desktop\tmp.jpg";
@@ -57,7 +60,10 @@ namespace CameraApp
         public Form1()
         {
             InitializeComponent();
-            
+
+            this.labelBatteryLevel.Parent = progressBar1;
+            //labelBatteryLevel.BackColor = Color.Transparent;
+
             //Disable buttons
             ToggleButtons(false);
             
@@ -90,6 +96,13 @@ namespace CameraApp
             testTimer = new Timer();
             testTimer.Tick += new EventHandler(testRefreshTimer_Tick);
             testTimer.Enabled = false;
+
+            Dictionary<int, string> directions = new Dictionary<int, string>();
+            directions.Add(1 , "Forward");
+            directions.Add(2 , "Backward");
+            comboBoxDirection.DataSource = new BindingSource(directions, null);
+            comboBoxDirection.DisplayMember = "Value";
+            comboBoxDirection.ValueMember = "Key";
         }
 
         private void testRefreshTimer_Tick(object sender, EventArgs e)
@@ -107,6 +120,7 @@ namespace CameraApp
                 timelapseTimer.Enabled = false;     //turn off timer to preserve resources
                 timeLapseActive = false;
                 ToggleButtons(true);
+                buttonTest.Enabled = true;
                 return;
             }
             try
@@ -129,6 +143,13 @@ namespace CameraApp
                     string status = stepperMotor.status;
                     bool moving = stepperMotor.isMoving;
                     textBoxStepper.Text = status;
+                    if (!timeLapseActive)
+                    {
+                        if (!moving)
+                        {
+                            buttonTest.Enabled = true;
+                        }
+                    }
                 }
                 catch
                 {
@@ -196,6 +217,8 @@ namespace CameraApp
             device.SetUnsigned(eNkMAIDCapability.kNkMAIDCapability_SaveMedia,
             (uint)eNkMAIDSaveMedia.kNkMAIDSaveMedia_SDRAM);
 
+            //get mode
+        
             screenRefreshTimer.Start();
             
         }
@@ -286,7 +309,7 @@ namespace CameraApp
                 }
 
                 //if moving time lapse
-                stepperMotor.move(1000, "1", 1000);
+                stepperMotor.move(1000, 1, 1000);
 
             }
             //re-enable buttons
@@ -317,6 +340,7 @@ namespace CameraApp
         {
                 buttonCapture.Enabled = status;
                 buttonPreview.Enabled = status;
+                buttonTimeLapse.Enabled = status;
         }
 
         private void buttonPreview_Click(object sender, EventArgs e)
@@ -373,6 +397,7 @@ namespace CameraApp
             {
                 return;
             }
+            buttonTest.Enabled = false;
             timelapseTimer.Enabled = true;
             timelapseTimer.Interval = pictureInterval*1000; //set the time for the timer to fire in milliseconds
             timeLapseActive = true;
@@ -383,7 +408,13 @@ namespace CameraApp
         private void buttonTest_Click(object sender, EventArgs e)
         {
             //move 1000 steps(5 rotations at 200 steps/rev), clockwise (1), at a speed of 500 Hz
-            stepperMotor.move(1000, "1", 500);
+            double steps = Convert.ToDouble(textBoxDistance.Text);
+            double speed = Convert.ToDouble(textBoxSpeed.Text);
+            int direction = (int)comboBoxDirection.SelectedValue;
+            if (steps < 1 || steps > 2000) return;
+            if (speed <= 1 || speed >= 2000) return;
+            buttonTest.Enabled = false;
+            stepperMotor.move(steps, direction, speed);
         }
 
         private void buttonOpenPorts_Click(object sender, EventArgs e)
@@ -393,8 +424,11 @@ namespace CameraApp
                 stepperMotor = new Stepper("COM3");              
                 stepperReceiver = stepperMotor.getReceiver((string s) => stepperMotor.parseStepper(s));
                 buttonOpenPorts.Enabled = false;
+                buttonTest.Enabled = true;
                 testTimer.Enabled = true;
                 testTimer.Interval = 200;
+                textBoxDistance.Enabled = true;
+                textBoxSpeed.Enabled = true;
             }
         }
     }
