@@ -15,7 +15,14 @@ using System.Diagnostics;
 using System.IO.Ports;
 
 
-
+//to do:
+//add button to stop (stepper and timelapse)
+//add sender to image ready (timelapse or regular capture)
+//Add option to name folder for timelapses and create folder and name photofiles that + appender
+//check if that option is already existing to prevent overwrite
+//make file to store number of captures already existing, then find max of that, and append from there for captures
+//find way to get current camera mode
+//add ways to manually set aperature, shutterspeed, iso etc dependent on current camera mode...
 
 
 namespace CameraApp
@@ -28,9 +35,11 @@ namespace CameraApp
         private Timer screenRefreshTimer;
         private SerialPortReceiver stepperReceiver;
 
-        int appender = 0;
+        int captureAppender = 0;
+        int timelapseAppender = 0;
         string temppath = @"C:\Users\hols\Desktop\tmp.jpg";
-        string rawpath = @"C:\Users\hols\Desktop\";
+        string rawpath = @"C:\Users\hols\Desktop\Computer App Photos\";
+        string saveType = "";
 
         //timelapse
         private Timer timelapseTimer;
@@ -48,8 +57,6 @@ namespace CameraApp
         public Form1()
         {
             InitializeComponent();
-
-            label1.Text = "No Camera Attached";
             
             //Disable buttons
             ToggleButtons(false);
@@ -115,19 +122,29 @@ namespace CameraApp
 
         private void screenRefreshTimer_Tick(object sender, EventArgs e)
         {
+            if(stepperMotor != null)
+            {
+                try
+                {
+                    string status = stepperMotor.status;
+                    bool moving = stepperMotor.isMoving;
+                    textBoxStepper.Text = status;
+                }
+                catch
+                {
+
+                }
+            }
             try
             {
                 NikonEnum aperture = device.GetEnum(eNkMAIDCapability.kNkMAIDCapability_Aperture);
                 float exposure = (float)device.GetFloat(eNkMAIDCapability.kNkMAIDCapability_ExposureStatus);
                 NikonEnum shutterspeed = device.GetEnum(eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed);
                 int batterylevel = (int)device.GetInteger(eNkMAIDCapability.kNkMAIDCapability_BatteryLevel);
-
-                string status = stepperMotor.status;
-                bool moving = stepperMotor.isMoving;
-                
+              
                 progressBar1.Value = Convert.ToInt32(batterylevel);
                 labelBatteryLevel.Text = batterylevel.ToString() + "%";
-                textBoxStepper.Text = status;
+
                 textBoxShutterSpeed.Text = shutterspeed.ToString();
                 textBoxAperature.Text = aperture.ToString();
                 textBoxEV.Text = exposure.ToString();
@@ -140,6 +157,8 @@ namespace CameraApp
 
         void liveViewTimer_Tick(object sender, EventArgs e)
         {
+            if (timeLapseActive) return;
+
             //Get live view image
             NikonLiveViewImage image = null;
 
@@ -196,6 +215,7 @@ namespace CameraApp
 
             //clear device name
             label1.Text = "No Camera Attached";
+            labelBatteryLevel.Text = "";
 
             //disable buttons
             ToggleButtons(false);
@@ -222,19 +242,33 @@ namespace CameraApp
 
             if (image.Type == NikonImageType.Raw)
             {
-                //prompt to save image
-                if (MessageBox.Show("Would you like to save this image?", "caption", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                bool saveImage = false;
+                if (timeLapseActive)
                 {
-                    //appending to save photos
-                    appender++;
-                    string currentPath = rawpath + appender.ToString() + image.Type.ToString();
+                    saveImage = true;
+                    timelapseAppender++; //append to keep track and avoid overwrite
+                    saveType = "timelapse-" + timelapseAppender.ToString();
+                }
+                //prompt to save image if not timelapse               
+                else 
+                {
+                    if (MessageBox.Show("Would you like to save this image?", "caption", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        saveImage = true;
+                        captureAppender++; //append to keep track and avoid overwrite
+                        saveType = "capture-" + captureAppender.ToString();
+                    }
+                }
+                if(saveImage == true)
+                {                    
+                    //set savepath
+                    string currentPath = rawpath + saveType + ((image.Type == NikonImageType.Raw) ? ".NEF" : ".jpg");
                     //save photo
                     using (FileStream stream = new FileStream(currentPath, FileMode.Create, FileAccess.Write))
                     {
                         stream.Write(image.Buffer, 0, image.Buffer.Length);
                     }
-                } 
-                
+                }              
             }
             string elapseTime = timer.Elapsed.TotalSeconds.ToString();
            // MessageBox.Show(String.Format(@"Time it took to process {0}, was {1} seconds", image.Type.ToString(), elapseTime));
@@ -245,31 +279,29 @@ namespace CameraApp
             timer.Stop();
             if (timeLapseActive)
             {
-                //3; 1000; 1; 2000;
+                if (stepperMotor.isMoving)
+                {
+                    MessageBox.Show("Cannot perform. Moving");
+                    return;
+                }
+
                 //if moving time lapse
                 stepperMotor.move(1000, "1", 1000);
 
             }
             //re-enable buttons
-            ToggleButtons(true);
-            
+            ToggleButtons(true);           
         }
 
         private void buttonCapture_Click(object sender, EventArgs e)
-        {
-            
-            timer.Start();
-            if (device == null)
-            {
-                return;
-            }
+        {            
+            timer.Start(); //timer to see how long a capture takes
+            if (device == null) return;
+
+            if (stepperMotor != null && stepperMotor.isMoving) return;
 
             ToggleButtons(false);
 
-            /*if (stepperData.ismoving)
-            {
-                return;
-            }*/
             try
             {
                 device.Capture();
@@ -289,10 +321,8 @@ namespace CameraApp
 
         private void buttonPreview_Click(object sender, EventArgs e)
         {
-            if (device == null)
-            {
-                return;
-            }
+            if (device == null) return;
+
             //is on, means we want to turn it off
             //backwards because its a toggle switch
             if (device.LiveViewEnabled)
@@ -325,25 +355,21 @@ namespace CameraApp
 
         private void buttonTimeLapse_Click(object sender, EventArgs e)
         {
-            if (timeLapseActive)
-            {
-                return;
-            }
-            if (device == null)
-            {
-                //return;
-            }
+            if (timeLapseActive) return;
+
+            if (device == null) return;
+
             if(MessageBox.Show("Enter TimeLapes?", "caption", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 timeLapseActive = true;
             }
-            //message box
-            //string promptValue = Prompt.ShowDialog("test", "123");
+    
+            //prompt user for inputs
             numberOfPictures = Convert.ToInt32(Microsoft.VisualBasic.Interaction.InputBox("Number of Pictures",
                        "Inputs", "", 10, 50));
             int pictureInterval = Convert.ToInt32(Microsoft.VisualBasic.Interaction.InputBox("Time Between Photos",
                         "Inputs", "", 10, 50));
-            if (pictureInterval < 3 || pictureInterval > 60) //min determined by write speed of camera
+            if (pictureInterval < 3 || pictureInterval > 60) //min determined by write speed of camera. max for typos
             {
                 return;
             }
@@ -356,6 +382,7 @@ namespace CameraApp
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
+            //move 1000 steps(5 rotations at 200 steps/rev), clockwise (1), at a speed of 500 Hz
             stepperMotor.move(1000, "1", 500);
         }
 

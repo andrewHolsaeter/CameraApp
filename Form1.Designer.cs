@@ -76,7 +76,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(93, 32);
             this.label1.TabIndex = 4;
-            this.label1.Text = "label1";
+            this.label1.Text = "No Camera Attached";
             // 
             // buttonPreview
             // 
@@ -176,7 +176,7 @@
             this.labelBatteryLevel.Name = "labelBatteryLevel";
             this.labelBatteryLevel.Size = new System.Drawing.Size(93, 32);
             this.labelBatteryLevel.TabIndex = 16;
-            this.labelBatteryLevel.Text = "label2";
+            this.labelBatteryLevel.Text = "";
             // 
             // buttonTest
             // 
