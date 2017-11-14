@@ -1,5 +1,6 @@
 #include <QueueArray.h>
 
+
 #pragma region Pin Constants
 
 const int direction_wire1 = 3; 
@@ -13,6 +14,9 @@ int stepCounter;
 int speed;
 bool enableStepper;
 volatile bool sendStuff = false;
+const int sendInterval = 100; //milliseconds
+
+int sendTimer;
 
 enum sendType {
 	NONE = 0,
@@ -22,8 +26,9 @@ enum sendType {
 	STEPPERCOUNTER = 4
 };
 sendType sendData;
-
 QueueArray <sendType> queue;
+
+
 
 char delim = ':';
 enum commandType {
@@ -125,7 +130,7 @@ void stepInterrupt() {
 			_moving = false;
 			//let the sender in main loop now what type it needs to send
 			//maybe put an if statement checking if sendType is open (dequeue or pop)
-			queue.enqueue(sendType::STATUS);
+			queue.enqueue(sendType::STATUS);			
 			//sendData = sendType::STATUS;
 			sendStuff = true;
 		}
@@ -192,6 +197,8 @@ void setup()
 	bool enableStepper = false;
 	freq = 12500;
 	startInterrupt(freq);
+
+	sendTimer = millis();
 }
 
 void startInterrupt(int frequency) {
@@ -223,9 +230,10 @@ ISR(TIMER1_OVF_vect)        // interrupt service routine
 	//putting something here so it doesnt get stuck
 	act[0].stepInterrupt();		
 }
+bool firstFull = true;
 
 void loop() {
-
+	
 	if (Serial.available()) {
 		ReceiveData();
 		if (Command == commandType::STOP) {
@@ -256,11 +264,17 @@ void loop() {
 	}
 
 	//send positions when moving
-	if (act[0].getStatus()) {
-		queue.enqueue(sendType::POSITION);
-		queue.enqueue(sendType::STEPPERCOUNTER);
-		sendStuff = true;
+	if (millis() - sendTimer > sendInterval) {
+		if (act[0].getStatus()) {
+			if (sendStuff == false) { //this will only send when the queue is empty. Only way I could get both to send without clogging up the queue
+				queue.enqueue(sendType::POSITION);
+				queue.enqueue(sendType::STEPPERCOUNTER);
+				sendStuff = true;
+			}		
+		}
+		sendTimer = millis();
 	}
+	
 }
 
 void Calibrate()
@@ -278,7 +292,6 @@ void Calibrate()
 }
 void SendData()
 {
-	//should probably implement some sort of queue, maybe an if before every assignment of
 	sendData = queue.dequeue();
 	Serial.print("x");
 	Serial.print(sendData);
@@ -286,6 +299,8 @@ void SendData()
 	switch (sendData) {
 	case sendType::STATUS:
 		Serial.print(act[0].getStatus());
+		queue.enqueue(sendType::STEPPERCOUNTER);
+		queue.enqueue(sendType::POSITION);
 		break;
 	case sendType::POSITION:
 		Serial.print(act[0].getPosition());
@@ -301,7 +316,7 @@ void SendData()
 	Serial.println("z");
 	if (queue.isEmpty()) {
 		sendStuff = false;
-		sendData = sendType::NONE;
+		//sendData = sendType::NONE;
 	}
 }
 
