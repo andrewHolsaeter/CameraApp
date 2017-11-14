@@ -153,7 +153,7 @@ void stepInterrupt() {
 		{
 			//lowering
 			_position = _position + 0.5; //dividing by 2 because everytime we enter the interrupt it only executes half a pulse
-			_position = _position + (0.5 / STEPS_PER_ROTATION); //dividing by 2 because everytime we enter the interrupt it only executes half a pulse
+			//_position = _position + (0.5 / STEPS_PER_ROTATION); //dividing by 2 because everytime we enter the interrupt it only executes half a pulse
 		}
 	}
 }
@@ -258,7 +258,7 @@ void loop() {
 	//send positions when moving
 	if (act[0].getStatus()) {
 		queue.enqueue(sendType::POSITION);
-		//queue.enqueue(sendType::STEPPERCOUNTER);
+		queue.enqueue(sendType::STEPPERCOUNTER);
 		sendStuff = true;
 	}
 }
