@@ -72,7 +72,7 @@
             // 
             this.pictureBox1.Location = new System.Drawing.Point(338, 81);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1275, 780);
+            this.pictureBox1.Size = new System.Drawing.Size(1275, 799);
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
@@ -167,7 +167,7 @@
             this.textBoxStepper.Location = new System.Drawing.Point(172, 660);
             this.textBoxStepper.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxStepper.Name = "textBoxStepper";
-            this.textBoxStepper.Size = new System.Drawing.Size(140, 30);
+            this.textBoxStepper.Size = new System.Drawing.Size(140, 31);
             this.textBoxStepper.TabIndex = 14;
             this.textBoxStepper.Text = "Disconnected";
             // 
@@ -192,7 +192,7 @@
             // buttonTest
             // 
             this.buttonTest.Enabled = false;
-            this.buttonTest.Location = new System.Drawing.Point(501, 933);
+            this.buttonTest.Location = new System.Drawing.Point(172, 840);
             this.buttonTest.Margin = new System.Windows.Forms.Padding(0);
             this.buttonTest.Name = "buttonTest";
             this.buttonTest.Size = new System.Drawing.Size(142, 40);
@@ -207,7 +207,7 @@
             this.comboBoxStepperPort.Location = new System.Drawing.Point(9, 605);
             this.comboBoxStepperPort.Margin = new System.Windows.Forms.Padding(0);
             this.comboBoxStepperPort.Name = "comboBoxStepperPort";
-            this.comboBoxStepperPort.Size = new System.Drawing.Size(140, 40);
+            this.comboBoxStepperPort.Size = new System.Drawing.Size(140, 33);
             this.comboBoxStepperPort.TabIndex = 18;
             // 
             // buttonOpenPorts
@@ -242,27 +242,27 @@
             // textBoxDistance
             // 
             this.textBoxDistance.Enabled = false;
-            this.textBoxDistance.Location = new System.Drawing.Point(501, 890);
+            this.textBoxDistance.Location = new System.Drawing.Point(172, 795);
             this.textBoxDistance.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxDistance.Name = "textBoxDistance";
             this.textBoxDistance.Size = new System.Drawing.Size(144, 31);
             this.textBoxDistance.TabIndex = 22;
-            this.textBoxDistance.Text = "200";
+            this.textBoxDistance.Text = "Distance";
             // 
             // textBoxSpeed
             // 
             this.textBoxSpeed.Enabled = false;
-            this.textBoxSpeed.Location = new System.Drawing.Point(338, 938);
+            this.textBoxSpeed.Location = new System.Drawing.Point(9, 840);
             this.textBoxSpeed.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxSpeed.Name = "textBoxSpeed";
             this.textBoxSpeed.Size = new System.Drawing.Size(144, 31);
             this.textBoxSpeed.TabIndex = 23;
-            this.textBoxSpeed.Text = "1000";
+            this.textBoxSpeed.Text = "Speed";
             // 
             // comboBoxDirection
             // 
             this.comboBoxDirection.FormattingEnabled = true;
-            this.comboBoxDirection.Location = new System.Drawing.Point(338, 888);
+            this.comboBoxDirection.Location = new System.Drawing.Point(9, 795);
             this.comboBoxDirection.Margin = new System.Windows.Forms.Padding(2);
             this.comboBoxDirection.Name = "comboBoxDirection";
             this.comboBoxDirection.Size = new System.Drawing.Size(144, 33);
@@ -274,7 +274,7 @@
             this.textBoxPosition.Location = new System.Drawing.Point(172, 705);
             this.textBoxPosition.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxPosition.Name = "textBoxPosition";
-            this.textBoxPosition.Size = new System.Drawing.Size(140, 30);
+            this.textBoxPosition.Size = new System.Drawing.Size(140, 31);
             this.textBoxPosition.TabIndex = 25;
             // 
             // labelPosition
@@ -292,7 +292,7 @@
             this.textBoxStepCount.Location = new System.Drawing.Point(172, 750);
             this.textBoxStepCount.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxStepCount.Name = "textBoxStepCount";
-            this.textBoxStepCount.Size = new System.Drawing.Size(140, 30);
+            this.textBoxStepCount.Size = new System.Drawing.Size(140, 31);
             this.textBoxStepCount.TabIndex = 27;
             // 
             // labelStepCount
