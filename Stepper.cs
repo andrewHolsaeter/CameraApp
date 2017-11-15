@@ -37,6 +37,7 @@ namespace CameraApp
         public bool isMoving { get; private set; }
         public double position { get; private set; }
         public string status { get; private set; }
+        public double stepCount { get; private set; }
 
         private System.IO.Ports.SerialPort serialPortStepperMotor;
 
@@ -75,7 +76,7 @@ namespace CameraApp
                     position = data;
                     break;
                 case (int)SendType.STEPPERCOUNTER:
-                    //to do
+                    stepCount = data;
                     break;      
             }
 

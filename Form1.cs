@@ -31,11 +31,11 @@ namespace CameraApp
 {
     public partial class Form1 : Form
     {
-        private NikonManager manager;
-        private NikonDevice device;
-        private Timer liveViewTimer;
-        private Timer screenRefreshTimer;
-        private SerialPortReceiver stepperReceiver;
+        private NikonManager manager; //camera manager
+        private NikonDevice device; //camera device
+        private Timer liveViewTimer; //timer for live view
+        private Timer screenRefreshTimer; //timer to update UI. See about having a delegate do this
+        private SerialPortReceiver stepperReceiver; //receiver to give stepper class to parse the communication
 
         //file save stuff
         int captureAppender = 0;
@@ -112,6 +112,7 @@ namespace CameraApp
             bool moving = stepperMotor.isMoving;
             textBoxStepper.Text = status;
             textBoxPosition.Text = stepperMotor.position.ToString();
+            textBoxStepCount.Text = stepperMotor.stepCount.ToString();
             if (!timeLapseActive)
             {
                 if (!moving)
@@ -419,7 +420,7 @@ namespace CameraApp
                 buttonOpenPorts.Enabled = false;
                 buttonTest.Enabled = true;
                 testTimer.Enabled = true;
-                testTimer.Interval = 200;
+                testTimer.Interval = 100;
                 textBoxDistance.Enabled = true;
                 textBoxSpeed.Enabled = true;
             }
