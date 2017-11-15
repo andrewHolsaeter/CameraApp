@@ -49,6 +49,26 @@ namespace CameraApp
             serialPortStepperMotor.DtrEnable = false;
             status = "created";
         }
+
+        internal SerialPortReceiver getReceiver(Action<String> p)
+        {
+            return new SerialPortReceiver(serialPortStepperMotor, p);
+        }
+
+        public void parseStepper(string completedBuffer)
+        {
+            double[] data = new double[2];
+            string[] stepperInString = completedBuffer.Split('y');
+            if (stepperInString.Length != 3) { return; }
+            // we ignore the 3rd, it is always empty           
+            for (int k = 0; k < 2; k++)
+            {
+                Double.TryParse(stepperInString[k], out data[k]);
+            }
+            Int32.TryParse(stepperInString[0],out int stepperCommand);
+            updateData((SendType)data[0], data[1]);
+                     
+        }
         public void updateData(SendType sendtype, double data)
         {
             int stepperCommand = (int)sendtype;
@@ -77,28 +97,11 @@ namespace CameraApp
                     break;
                 case (int)SendType.STEPPERCOUNTER:
                     stepCount = data;
-                    break;      
+                    break;
             }
 
         }
-        public void parseStepper(string completedBuffer)
-        {
-            double[] data = new double[2];
-            string[] stepperInString = completedBuffer.Split('y');
-            if (stepperInString.Length != 3) { return; }
-            // we ignore the 3rd, it is always empty           
-            for (int k = 0; k < 2; k++)
-            {
-                Double.TryParse(stepperInString[k], out data[k]);
-            }
-            Int32.TryParse(stepperInString[0],out int stepperCommand);
-            updateData((SendType)data[0], data[1]);
-                     
-        }
-        internal SerialPortReceiver getReceiver(Action<String> p)
-        {
-            return new SerialPortReceiver(serialPortStepperMotor, p);
-        }     
+  
         /*
         public StepperData getData()
         {
@@ -121,10 +124,10 @@ namespace CameraApp
 
         public void move(double distance, int direction, double speed)
         {
-            //if (!Double.TryParse(direction, out dir)) return;
+            //move steps(200 steps/rev), clockwise = 1, at a speed in Hz
             int command = (int)CommandType.MOVE;
             string output = command + ";" + distance + ";" + direction + ";" + speed + ";";
-            this.serialPortStepperMotor.WriteLine(output); //writing to the debugger gets weird when i do this
+            this.serialPortStepperMotor.WriteLine(output); 
         }
     }
 }

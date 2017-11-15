@@ -19,12 +19,12 @@ using System.IO.Ports;
 //add button to stop (stepper and timelapse)
 //get screenSize and adjust display off of that
 //Add option to name folder for timelapses and create folder and name photofiles that + appender
-//check if that option is already existing to prevent overwrite
-//make file to store number of captures already existing, then find max of that, and append from there for captures
+//  -check if that option is already existing to prevent overwrite
+//make (text?) file to store number of captures already existing, then find max of that, and append from there for captures
 //find way to get current camera mode
 //add ways to manually set aperature, shutterspeed, iso etc dependent on current camera mode...
 //calibrate slider (need functioning end stops first)
-// -move one direction. Once End has been hit, move the other direction until other stop hit. Send steps it too.
+// -move one direction. Once End has been hit, move the other direction until other stop hit. Send # of steps it took.
 
 
 namespace CameraApp
@@ -42,12 +42,12 @@ namespace CameraApp
         int timelapseAppender = 0;
         string temppath = @"C:\Users\hols\Desktop\tmp.jpg";
         string rawpath = @"C:\Users\hols\Desktop\Computer App Photos\";
-        string saveType = "";
+        string savePath = "";
 
         //timelapse
-        private Timer timelapseTimer;
-        int timelapseCounter;
-        int numberOfPictures;
+        private Timer timelapseTimer; //timer to fire the capture
+        int timelapseCounter; //number of remaining pics to take
+        int numberOfPictures; //number of total pictures to take in the timelapse
         bool timeLapseActive = false;
 
         //timer to see how long it takes to capture image
@@ -61,7 +61,7 @@ namespace CameraApp
         {
             InitializeComponent();
 
-            this.labelBatteryLevel.Parent = progressBar1;
+            this.labelBatteryLevel.Parent = progressBar1; //FIXME
             //labelBatteryLevel.BackColor = Color.Transparent;
 
             //Disable buttons
@@ -70,15 +70,15 @@ namespace CameraApp
             // Initialize the live view timer
             liveViewTimer = new Timer();
             liveViewTimer.Tick += new EventHandler(liveViewTimer_Tick);
-            liveViewTimer.Interval = 1000 / 30; //maybe change this to 1000/24 because fps
+            liveViewTimer.Interval = 1000 / 30; //maybe change this to 1000/24 because camera fps
 
-            //initialize UI refresh timer. See if there is a better way to do this
+            //initialize UI refresh timer. See if there is a better way to do this (delegate or cap value change)
             screenRefreshTimer = new Timer();
             screenRefreshTimer.Tick += new EventHandler(screenRefreshTimer_Tick);
             screenRefreshTimer.Interval = 500;
 
             // Initialize Nikon manager
-            manager = new NikonManager("Type0004.md3");
+            manager = new NikonManager("Type0004.md3"); //file for d7000 from nikon.com. Include in .exe location
             manager.DeviceAdded += new DeviceAddedDelegate(manager_DeviceAdded);
             manager.DeviceRemoved += new DeviceRemovedDelegate(manager_DeviceRemoved);
             
@@ -97,6 +97,7 @@ namespace CameraApp
             testTimer.Tick += new EventHandler(testRefreshTimer_Tick);
             testTimer.Enabled = false;
 
+            //selection for stepper direction
             Dictionary<int, string> directions = new Dictionary<int, string>();
             directions.Add(1 , "Forward");
             directions.Add(2 , "Backward");
@@ -108,7 +109,7 @@ namespace CameraApp
         private void testRefreshTimer_Tick(object sender, EventArgs e)
         {
             if (stepperMotor == null) return;
-            string status = stepperMotor.status;
+            string status = stepperMotor.status; //moving or not
             bool moving = stepperMotor.isMoving;
             textBoxStepper.Text = status;
             textBoxPosition.Text = stepperMotor.position.ToString();
@@ -169,10 +170,9 @@ namespace CameraApp
         void liveViewTimer_Tick(object sender, EventArgs e)
         {
             if (timeLapseActive) return;
-
-            //Get live view image
+            //clear picture box
             NikonLiveViewImage image = null;
-
+            //Get live view image
             try
             {
                 image = device.GetLiveViewImage();              
@@ -194,20 +194,20 @@ namespace CameraApp
         void manager_DeviceAdded(NikonManager sender, NikonDevice device)
         {
             this.device = device;
-
-            //to do: set the device name
             label1.Text = device.Name;
 
             ToggleButtons(true);
+
             //Hook up device capture events
             device.ImageReady += new ImageReadyDelegate(device_ImageReady);
             device.CaptureComplete += new CaptureCompleteDelegate(device_CaptureComplete);
             device.CapabilityValueChanged += new CapabilityChangedDelegate(device_CapValueChange);
-            //this will writre to sd card, computer or both
+
+            //this will write to sd card, computer or both
             device.SetUnsigned(eNkMAIDCapability.kNkMAIDCapability_SaveMedia,
-            (uint)eNkMAIDSaveMedia.kNkMAIDSaveMedia_SDRAM);
+            (uint)eNkMAIDSaveMedia.kNkMAIDSaveMedia_SDRAM); //currently savin to computer
 
-
+            //FIXME
             NikonRange r = device.GetRange(eNkMAIDCapability.kNkMAIDCapability_Aperture);
             //get mode
             textBoxCameraMode.Text = r.Value.ToString();
@@ -216,11 +216,11 @@ namespace CameraApp
             screenRefreshTimer.Start();
             
         }
-        int capValueCounter = 0;
+
+        //FIXME
         private void device_CapValueChange(NikonDevice sender, eNkMAIDCapability capability)
         {
             string cap = capability.ToString();
-            capValueCounter++;
             //MessageBox.Show(capValueCounter.ToString());
         }
 
@@ -262,24 +262,25 @@ namespace CameraApp
                 bool saveImage = false;
                 if (timeLapseActive)
                 {
-                    saveImage = true;
+                    saveImage = true; //want to automatically save timelapse photos so message box doesn't appear every time
                     timelapseAppender++; //append to keep track and avoid overwrite
-                    saveType = "timelapse-" + timelapseAppender.ToString();
+                    savePath = "timelapse-" + timelapseAppender.ToString(); 
                 }
                 //prompt to save image if not timelapse               
                 else 
                 {
-                    if (MessageBox.Show("Would you like to save this image?", "caption", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (MessageBox.Show("Would you like to save this image?", "caption", MessageBoxButtons.YesNo) 
+                        == DialogResult.Yes)
                     {
                         saveImage = true;
                         captureAppender++; //append to keep track and avoid overwrite
-                        saveType = "capture-" + captureAppender.ToString();
+                        savePath = "capture-" + captureAppender.ToString();
                     }
                 }
                 if(saveImage == true)
                 {                    
                     //set savepath
-                    string currentPath = rawpath + saveType + ((image.Type == NikonImageType.Raw) ? ".NEF" : ".jpg");
+                    string currentPath = rawpath + savePath + ((image.Type == NikonImageType.Raw) ? ".NEF" : ".jpg");
                     //save photo
                     using (FileStream stream = new FileStream(currentPath, FileMode.Create, FileAccess.Write))
                     {
@@ -287,7 +288,7 @@ namespace CameraApp
                     }
                 }              
             }
-            string elapseTime = timer.Elapsed.TotalSeconds.ToString();
+            string elapseTime = timer.Elapsed.TotalSeconds.ToString(); //for seeing how long this took since capture method was fired
            // MessageBox.Show(String.Format(@"Time it took to process {0}, was {1} seconds", image.Type.ToString(), elapseTime));
         }
 
@@ -303,7 +304,7 @@ namespace CameraApp
                 }
 
                 //if moving time lapse
-                stepperMotor.move(1000, 1, 1000);
+                stepperMotor.move(1000, 1, 1000); //FIXME adjust this for manual inputs 
 
             }
             //re-enable buttons
@@ -315,7 +316,7 @@ namespace CameraApp
             timer.Start(); //timer to see how long a capture takes
             if (device == null) return;
 
-            if (stepperMotor != null && stepperMotor.isMoving) return;
+            if (stepperMotor != null && stepperMotor.isMoving) return; //exit if stepper is moving
 
             ToggleButtons(false);
 
@@ -374,7 +375,6 @@ namespace CameraApp
         private void buttonTimeLapse_Click(object sender, EventArgs e)
         {
             if (timeLapseActive) return;
-
             if (device == null) return;
 
             if(MessageBox.Show("Enter TimeLapes?", "caption", MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -387,7 +387,7 @@ namespace CameraApp
                        "Inputs", "", 10, 50));
             int pictureInterval = Convert.ToInt32(Microsoft.VisualBasic.Interaction.InputBox("Time Between Photos",
                         "Inputs", "", 10, 50));
-            if (pictureInterval < 3 || pictureInterval > 60) //min determined by write speed of camera. max for typos
+            if (pictureInterval < 3 || pictureInterval > 60) //min determined by write speed of camera. max to catch typos
             {
                 return;
             }
@@ -401,12 +401,12 @@ namespace CameraApp
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
-            //move 1000 steps(5 rotations at 200 steps/rev), clockwise (1), at a speed of 500 Hz
+            //move steps(200 steps/rev), clockwise = 1, at a speed in Hz
             double steps = Convert.ToDouble(textBoxDistance.Text);
             double speed = Convert.ToDouble(textBoxSpeed.Text);
             int direction = (int)comboBoxDirection.SelectedValue;
             if (steps < 1 || steps > 2000) return;
-            if (speed <= 1 || speed >= 2000) return;
+            if (speed <= 1 || speed >= 1900) return; //limits were determined from testing motor
             buttonTest.Enabled = false;
             stepperMotor.move(steps, direction, speed);
         }
