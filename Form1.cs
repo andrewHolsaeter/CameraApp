@@ -60,6 +60,8 @@ namespace CameraApp
         public Form1()
         {
             InitializeComponent();
+            this.Location = new Point(0, 0);
+            this.Size = Screen.PrimaryScreen.WorkingArea.Size;
 
             this.labelBatteryLevel.Parent = progressBar1; //FIXME
             //labelBatteryLevel.BackColor = Color.Transparent;
