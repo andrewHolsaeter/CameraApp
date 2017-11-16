@@ -17,7 +17,6 @@ using System.IO.Ports;
 
 //to do:
 //add button to stop (stepper and timelapse)
-//get screenSize and adjust display off of that
 //Add option to name folder for timelapses and create folder and name photofiles that + appender
 //  -check if that option is already existing to prevent overwrite
 //make (text?) file to store number of captures already existing, then find max of that, and append from there for captures
@@ -92,7 +91,11 @@ namespace CameraApp
             //initiliaze serial port for stepper motor
             string[] serialPorts = System.IO.Ports.SerialPort.GetPortNames();
             comboBoxStepperPort.Items.AddRange(serialPorts);
-            comboBoxStepperPort.SelectedIndex = comboBoxStepperPort.FindStringExact("COM3");
+            comboBoxStepperPort.SelectedIndex = comboBoxStepperPort.FindStringExact("COM3"); //save me time have to select it
+            if (comboBoxStepperPort.Items.Count == 0)
+            {
+                buttonOpenPorts.Text = "Refresh";
+            }
 
             //initialize test timer
             testTimer = new Timer();
@@ -210,9 +213,9 @@ namespace CameraApp
             (uint)eNkMAIDSaveMedia.kNkMAIDSaveMedia_SDRAM); //currently savin to computer
 
             //FIXME
-            NikonRange r = device.GetRange(eNkMAIDCapability.kNkMAIDCapability_Aperture);
+            //NikonRange r = device.GetRange(eNkMAIDCapability.kNkMAIDCapability_Aperture);
             //get mode
-            textBoxCameraMode.Text = r.Value.ToString();
+            //textBoxCameraMode.Text = r.Value.ToString();
             //textBoxCameraMode.Text = r.Max.ToString();
 
             screenRefreshTimer.Start();
@@ -404,28 +407,53 @@ namespace CameraApp
         private void buttonTest_Click(object sender, EventArgs e)
         {
             //move steps(200 steps/rev), clockwise = 1, at a speed in Hz
-            double steps = Convert.ToDouble(textBoxDistance.Text);
-            double speed = Convert.ToDouble(textBoxSpeed.Text);
-            int direction = (int)comboBoxDirection.SelectedValue;
-            if (steps < 1 || steps > 2000) return;
-            if (speed <= 1 || speed >= 1900) return; //limits were determined from testing motor
-            buttonTest.Enabled = false;
-            stepperMotor.move(steps, direction, speed);
+            try
+            {
+                double steps = Convert.ToDouble(textBoxDistance.Text);
+                double speed = Convert.ToDouble(textBoxSpeed.Text);
+                int direction = (int)comboBoxDirection.SelectedValue;
+                if (steps < 1 || steps > 2000) return;
+                if (speed <= 1 || speed >= 1900) return; //limits were determined from testing motor
+                buttonTest.Enabled = false;
+                stepperMotor.move(steps, direction, speed);
+            }
+            catch
+            {
+                MessageBox.Show("Invalid Inputs");
+            }
         }
 
         private void buttonOpenPorts_Click(object sender, EventArgs e)
         {
-            if (stepperMotor == null)
+            if (comboBoxStepperPort.Items.Count == 0)
             {
-                stepperMotor = new Stepper("COM3");              
-                stepperReceiver = stepperMotor.getReceiver((string s) => stepperMotor.parseStepper(s));
-                buttonOpenPorts.Enabled = false;
-                buttonTest.Enabled = true;
-                testTimer.Enabled = true;
-                testTimer.Interval = 100;
-                textBoxDistance.Enabled = true;
-                textBoxSpeed.Enabled = true;
+                //rescan
+                string[] serialPorts = System.IO.Ports.SerialPort.GetPortNames();
+                comboBoxStepperPort.Items.AddRange(serialPorts);
+                comboBoxStepperPort.SelectedIndex = comboBoxStepperPort.FindStringExact("COM3");
+                if (comboBoxStepperPort.Items.Count > 0)
+                {
+                    buttonOpenPorts.Text = "Open";
+                }
+                return;
             }
+            else
+            {
+                if (stepperMotor == null)
+                {
+                    if (comboBoxStepperPort.SelectedItem == null) return;
+                    string stepperName = comboBoxStepperPort.SelectedItem.ToString();
+                    stepperMotor = new Stepper(stepperName);
+                    stepperReceiver = stepperMotor.getReceiver((string s) => stepperMotor.parseStepper(s));
+                    buttonOpenPorts.Enabled = false;
+                    buttonTest.Enabled = true;
+                    testTimer.Enabled = true;
+                    testTimer.Interval = 100;
+                    textBoxDistance.Enabled = true;
+                    textBoxSpeed.Enabled = true;
+                }
+            }
+
         }
     }
 
