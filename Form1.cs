@@ -33,7 +33,6 @@ namespace CameraApp
         private NikonManager manager; //camera manager
         private NikonDevice device; //camera device
         private Timer liveViewTimer; //timer for live view
-        private Timer screenRefreshTimer; //timer to update UI. See about having a delegate do this
         private SerialPortReceiver stepperReceiver; //receiver to give stepper class to parse the communication
 
         //file save stuff
@@ -72,12 +71,7 @@ namespace CameraApp
             liveViewTimer = new Timer();
             liveViewTimer.Tick += new EventHandler(liveViewTimer_Tick);
             liveViewTimer.Interval = 1000 / 30; //maybe change this to 1000/24 because camera fps
-
-            //initialize UI refresh timer. See if there is a better way to do this (delegate or cap value change)
-            screenRefreshTimer = new Timer();
-            screenRefreshTimer.Tick += new EventHandler(screenRefreshTimer_Tick);
-            screenRefreshTimer.Interval = 500;
-
+  
             // Initialize Nikon manager
             manager = new NikonManager("Type0004.md3"); //file for d7000 from nikon.com. Include in .exe location
             manager.DeviceAdded += new DeviceAddedDelegate(manager_DeviceAdded);
@@ -149,16 +143,15 @@ namespace CameraApp
 
             }          
         }
-
-        private void screenRefreshTimer_Tick(object sender, EventArgs e)
-        {           
+        void updateCameraData()
+        {
             try
             {
                 NikonEnum aperture = device.GetEnum(eNkMAIDCapability.kNkMAIDCapability_Aperture);
                 float exposure = (float)device.GetFloat(eNkMAIDCapability.kNkMAIDCapability_ExposureStatus);
                 NikonEnum shutterspeed = device.GetEnum(eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed);
                 int batterylevel = (int)device.GetInteger(eNkMAIDCapability.kNkMAIDCapability_BatteryLevel);
-              
+
                 progressBar1.Value = Convert.ToInt32(batterylevel);
                 labelBatteryLevel.Text = batterylevel.ToString() + "%";
 
@@ -168,10 +161,9 @@ namespace CameraApp
             }
             catch
             {
-               // MessageBox.Show("Unable to get data");
+                // MessageBox.Show("Unable to get data");
             }
         }
-
         void liveViewTimer_Tick(object sender, EventArgs e)
         {
             if (timeLapseActive) return;
@@ -212,21 +204,18 @@ namespace CameraApp
             device.SetUnsigned(eNkMAIDCapability.kNkMAIDCapability_SaveMedia,
             (uint)eNkMAIDSaveMedia.kNkMAIDSaveMedia_SDRAM); //currently savin to computer
 
+            updateCameraData();
+
             //FIXME
             //NikonRange r = device.GetRange(eNkMAIDCapability.kNkMAIDCapability_Aperture);
             //get mode
             //textBoxCameraMode.Text = r.Value.ToString();
             //textBoxCameraMode.Text = r.Max.ToString();
-
-            screenRefreshTimer.Start();
             
         }
-
-        //FIXME
         private void device_CapValueChange(NikonDevice sender, eNkMAIDCapability capability)
         {
-            string cap = capability.ToString();
-            //MessageBox.Show(capValueCounter.ToString());
+            updateCameraData();
         }
 
         void manager_DeviceRemoved(NikonManager sender, NikonDevice device)
@@ -244,9 +233,7 @@ namespace CameraApp
 
             //clear picture box
             pictureBox1.Image = null;
-            
-            //stop refreshing screen
-            screenRefreshTimer.Stop();
+
         }
         void device_ImageReady(NikonDevice sender, NikonImage image)
         {          
