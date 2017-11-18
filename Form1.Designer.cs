@@ -54,15 +54,17 @@
             this.labelPosition = new System.Windows.Forms.Label();
             this.textBoxStepCount = new System.Windows.Forms.TextBox();
             this.labelStepCount = new System.Windows.Forms.Label();
+            this.comboBoxMicrostep = new System.Windows.Forms.ComboBox();
+            this.buttonChangeMicrostep = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonCapture
             // 
-            this.buttonCapture.Location = new System.Drawing.Point(172, 81);
+            this.buttonCapture.Location = new System.Drawing.Point(229, 100);
             this.buttonCapture.Margin = new System.Windows.Forms.Padding(0);
             this.buttonCapture.Name = "buttonCapture";
-            this.buttonCapture.Size = new System.Drawing.Size(142, 97);
+            this.buttonCapture.Size = new System.Drawing.Size(189, 120);
             this.buttonCapture.TabIndex = 2;
             this.buttonCapture.Text = "Capture";
             this.buttonCapture.UseVisualStyleBackColor = true;
@@ -70,28 +72,29 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(338, 81);
+            this.pictureBox1.Location = new System.Drawing.Point(451, 100);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1275, 799);
+            this.pictureBox1.Size = new System.Drawing.Size(1700, 991);
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(17, 16);
+            this.label1.Location = new System.Drawing.Point(23, 20);
             this.label1.Margin = new System.Windows.Forms.Padding(0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(142, 56);
+            this.label1.Size = new System.Drawing.Size(189, 69);
             this.label1.TabIndex = 4;
             this.label1.Text = "No Camera Attached";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // buttonPreview
             // 
-            this.buttonPreview.Location = new System.Drawing.Point(172, 190);
+            this.buttonPreview.Location = new System.Drawing.Point(229, 236);
             this.buttonPreview.Margin = new System.Windows.Forms.Padding(0);
             this.buttonPreview.Name = "buttonPreview";
-            this.buttonPreview.Size = new System.Drawing.Size(142, 97);
+            this.buttonPreview.Size = new System.Drawing.Size(189, 120);
             this.buttonPreview.TabIndex = 5;
             this.buttonPreview.Text = "Preview";
             this.buttonPreview.UseVisualStyleBackColor = true;
@@ -100,62 +103,66 @@
             // textBoxShutterSpeed
             // 
             this.textBoxShutterSpeed.Enabled = false;
-            this.textBoxShutterSpeed.Location = new System.Drawing.Point(172, 452);
+            this.textBoxShutterSpeed.Location = new System.Drawing.Point(229, 560);
             this.textBoxShutterSpeed.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxShutterSpeed.Name = "textBoxShutterSpeed";
-            this.textBoxShutterSpeed.Size = new System.Drawing.Size(144, 31);
+            this.textBoxShutterSpeed.Size = new System.Drawing.Size(191, 38);
             this.textBoxShutterSpeed.TabIndex = 7;
             // 
             // textBoxAperature
             // 
             this.textBoxAperature.Enabled = false;
-            this.textBoxAperature.Location = new System.Drawing.Point(172, 407);
+            this.textBoxAperature.Location = new System.Drawing.Point(229, 505);
             this.textBoxAperature.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxAperature.Name = "textBoxAperature";
-            this.textBoxAperature.Size = new System.Drawing.Size(144, 31);
+            this.textBoxAperature.Size = new System.Drawing.Size(191, 38);
             this.textBoxAperature.TabIndex = 8;
             // 
             // textBoxEV
             // 
             this.textBoxEV.Enabled = false;
-            this.textBoxEV.Location = new System.Drawing.Point(172, 496);
+            this.textBoxEV.Location = new System.Drawing.Point(229, 615);
             this.textBoxEV.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxEV.Name = "textBoxEV";
-            this.textBoxEV.Size = new System.Drawing.Size(144, 31);
+            this.textBoxEV.Size = new System.Drawing.Size(191, 38);
             this.textBoxEV.TabIndex = 9;
             // 
             // labelEV
             // 
             this.labelEV.AutoSize = true;
-            this.labelEV.Location = new System.Drawing.Point(17, 501);
+            this.labelEV.Location = new System.Drawing.Point(23, 621);
+            this.labelEV.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelEV.Name = "labelEV";
-            this.labelEV.Size = new System.Drawing.Size(103, 25);
+            this.labelEV.Size = new System.Drawing.Size(135, 32);
             this.labelEV.TabIndex = 10;
             this.labelEV.Text = "Exposure";
             // 
             // labelShutterSpeed
             // 
             this.labelShutterSpeed.AutoSize = true;
-            this.labelShutterSpeed.Location = new System.Drawing.Point(17, 456);
+            this.labelShutterSpeed.Location = new System.Drawing.Point(23, 565);
+            this.labelShutterSpeed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelShutterSpeed.Name = "labelShutterSpeed";
-            this.labelShutterSpeed.Size = new System.Drawing.Size(149, 25);
+            this.labelShutterSpeed.Size = new System.Drawing.Size(197, 32);
             this.labelShutterSpeed.TabIndex = 11;
             this.labelShutterSpeed.Text = "Shutter Speed";
             // 
             // labelAperature
             // 
             this.labelAperature.AutoSize = true;
-            this.labelAperature.Location = new System.Drawing.Point(17, 412);
+            this.labelAperature.Location = new System.Drawing.Point(23, 511);
+            this.labelAperature.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelAperature.Name = "labelAperature";
-            this.labelAperature.Size = new System.Drawing.Size(106, 25);
+            this.labelAperature.Size = new System.Drawing.Size(140, 32);
             this.labelAperature.TabIndex = 12;
             this.labelAperature.Text = "Aperature";
             // 
             // buttonTimeLapse
             // 
-            this.buttonTimeLapse.Location = new System.Drawing.Point(172, 298);
+            this.buttonTimeLapse.Location = new System.Drawing.Point(229, 370);
+            this.buttonTimeLapse.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.buttonTimeLapse.Name = "buttonTimeLapse";
-            this.buttonTimeLapse.Size = new System.Drawing.Size(142, 97);
+            this.buttonTimeLapse.Size = new System.Drawing.Size(189, 120);
             this.buttonTimeLapse.TabIndex = 13;
             this.buttonTimeLapse.Text = "TimeLapse";
             this.buttonTimeLapse.UseVisualStyleBackColor = true;
@@ -164,38 +171,38 @@
             // textBoxStepper
             // 
             this.textBoxStepper.Enabled = false;
-            this.textBoxStepper.Location = new System.Drawing.Point(172, 660);
+            this.textBoxStepper.Location = new System.Drawing.Point(229, 818);
             this.textBoxStepper.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxStepper.Name = "textBoxStepper";
-            this.textBoxStepper.Size = new System.Drawing.Size(140, 31);
+            this.textBoxStepper.Size = new System.Drawing.Size(185, 38);
             this.textBoxStepper.TabIndex = 14;
             this.textBoxStepper.Text = "Disconnected";
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(172, 24);
-            this.progressBar1.Margin = new System.Windows.Forms.Padding(2);
+            this.progressBar1.Location = new System.Drawing.Point(229, 30);
+            this.progressBar1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(142, 40);
+            this.progressBar1.Size = new System.Drawing.Size(189, 50);
             this.progressBar1.TabIndex = 16;
             // 
             // labelBatteryLevel
             // 
             this.labelBatteryLevel.BackColor = System.Drawing.Color.Transparent;
-            this.labelBatteryLevel.Location = new System.Drawing.Point(172, 24);
+            this.labelBatteryLevel.Location = new System.Drawing.Point(229, 30);
             this.labelBatteryLevel.Margin = new System.Windows.Forms.Padding(0);
             this.labelBatteryLevel.Name = "labelBatteryLevel";
-            this.labelBatteryLevel.Size = new System.Drawing.Size(142, 81);
+            this.labelBatteryLevel.Size = new System.Drawing.Size(189, 100);
             this.labelBatteryLevel.TabIndex = 15;
             this.labelBatteryLevel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // buttonTest
             // 
             this.buttonTest.Enabled = false;
-            this.buttonTest.Location = new System.Drawing.Point(172, 840);
+            this.buttonTest.Location = new System.Drawing.Point(229, 1042);
             this.buttonTest.Margin = new System.Windows.Forms.Padding(0);
             this.buttonTest.Name = "buttonTest";
-            this.buttonTest.Size = new System.Drawing.Size(142, 40);
+            this.buttonTest.Size = new System.Drawing.Size(189, 50);
             this.buttonTest.TabIndex = 17;
             this.buttonTest.Text = "Test";
             this.buttonTest.UseVisualStyleBackColor = true;
@@ -204,18 +211,18 @@
             // comboBoxStepperPort
             // 
             this.comboBoxStepperPort.FormattingEnabled = true;
-            this.comboBoxStepperPort.Location = new System.Drawing.Point(9, 605);
+            this.comboBoxStepperPort.Location = new System.Drawing.Point(12, 750);
             this.comboBoxStepperPort.Margin = new System.Windows.Forms.Padding(0);
             this.comboBoxStepperPort.Name = "comboBoxStepperPort";
-            this.comboBoxStepperPort.Size = new System.Drawing.Size(140, 33);
+            this.comboBoxStepperPort.Size = new System.Drawing.Size(185, 39);
             this.comboBoxStepperPort.TabIndex = 18;
             // 
             // buttonOpenPorts
             // 
-            this.buttonOpenPorts.Location = new System.Drawing.Point(172, 605);
+            this.buttonOpenPorts.Location = new System.Drawing.Point(229, 750);
             this.buttonOpenPorts.Margin = new System.Windows.Forms.Padding(0);
             this.buttonOpenPorts.Name = "buttonOpenPorts";
-            this.buttonOpenPorts.Size = new System.Drawing.Size(142, 40);
+            this.buttonOpenPorts.Size = new System.Drawing.Size(189, 50);
             this.buttonOpenPorts.TabIndex = 19;
             this.buttonOpenPorts.Text = "Open";
             this.buttonOpenPorts.UseVisualStyleBackColor = true;
@@ -224,91 +231,117 @@
             // labelStepperStatus
             // 
             this.labelStepperStatus.AutoSize = true;
-            this.labelStepperStatus.Location = new System.Drawing.Point(17, 660);
+            this.labelStepperStatus.Location = new System.Drawing.Point(23, 818);
+            this.labelStepperStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelStepperStatus.Name = "labelStepperStatus";
-            this.labelStepperStatus.Size = new System.Drawing.Size(73, 25);
+            this.labelStepperStatus.Size = new System.Drawing.Size(96, 32);
             this.labelStepperStatus.TabIndex = 20;
             this.labelStepperStatus.Text = "Status";
             // 
             // textBoxCameraMode
             // 
             this.textBoxCameraMode.Enabled = false;
-            this.textBoxCameraMode.Location = new System.Drawing.Point(9, 81);
+            this.textBoxCameraMode.Location = new System.Drawing.Point(12, 100);
             this.textBoxCameraMode.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxCameraMode.Name = "textBoxCameraMode";
-            this.textBoxCameraMode.Size = new System.Drawing.Size(144, 31);
+            this.textBoxCameraMode.Size = new System.Drawing.Size(191, 38);
             this.textBoxCameraMode.TabIndex = 21;
             // 
             // textBoxDistance
             // 
             this.textBoxDistance.Enabled = false;
-            this.textBoxDistance.Location = new System.Drawing.Point(172, 795);
+            this.textBoxDistance.Location = new System.Drawing.Point(229, 986);
             this.textBoxDistance.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxDistance.Name = "textBoxDistance";
-            this.textBoxDistance.Size = new System.Drawing.Size(144, 31);
+            this.textBoxDistance.Size = new System.Drawing.Size(191, 38);
             this.textBoxDistance.TabIndex = 22;
             this.textBoxDistance.Text = "Distance";
             // 
             // textBoxSpeed
             // 
             this.textBoxSpeed.Enabled = false;
-            this.textBoxSpeed.Location = new System.Drawing.Point(9, 840);
+            this.textBoxSpeed.Location = new System.Drawing.Point(12, 1042);
             this.textBoxSpeed.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxSpeed.Name = "textBoxSpeed";
-            this.textBoxSpeed.Size = new System.Drawing.Size(144, 31);
+            this.textBoxSpeed.Size = new System.Drawing.Size(191, 38);
             this.textBoxSpeed.TabIndex = 23;
             this.textBoxSpeed.Text = "Speed";
             // 
             // comboBoxDirection
             // 
             this.comboBoxDirection.FormattingEnabled = true;
-            this.comboBoxDirection.Location = new System.Drawing.Point(9, 795);
-            this.comboBoxDirection.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxDirection.Location = new System.Drawing.Point(12, 986);
+            this.comboBoxDirection.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBoxDirection.Name = "comboBoxDirection";
-            this.comboBoxDirection.Size = new System.Drawing.Size(144, 33);
+            this.comboBoxDirection.Size = new System.Drawing.Size(191, 39);
             this.comboBoxDirection.TabIndex = 24;
             // 
             // textBoxPosition
             // 
             this.textBoxPosition.Enabled = false;
-            this.textBoxPosition.Location = new System.Drawing.Point(172, 705);
+            this.textBoxPosition.Location = new System.Drawing.Point(229, 874);
             this.textBoxPosition.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxPosition.Name = "textBoxPosition";
-            this.textBoxPosition.Size = new System.Drawing.Size(140, 31);
+            this.textBoxPosition.Size = new System.Drawing.Size(185, 38);
             this.textBoxPosition.TabIndex = 25;
             // 
             // labelPosition
             // 
             this.labelPosition.AutoSize = true;
-            this.labelPosition.Location = new System.Drawing.Point(17, 711);
+            this.labelPosition.Location = new System.Drawing.Point(23, 882);
+            this.labelPosition.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelPosition.Name = "labelPosition";
-            this.labelPosition.Size = new System.Drawing.Size(89, 25);
+            this.labelPosition.Size = new System.Drawing.Size(118, 32);
             this.labelPosition.TabIndex = 26;
             this.labelPosition.Text = "Position";
             // 
             // textBoxStepCount
             // 
             this.textBoxStepCount.Enabled = false;
-            this.textBoxStepCount.Location = new System.Drawing.Point(172, 750);
+            this.textBoxStepCount.Location = new System.Drawing.Point(229, 930);
             this.textBoxStepCount.Margin = new System.Windows.Forms.Padding(0);
             this.textBoxStepCount.Name = "textBoxStepCount";
-            this.textBoxStepCount.Size = new System.Drawing.Size(140, 31);
+            this.textBoxStepCount.Size = new System.Drawing.Size(185, 38);
             this.textBoxStepCount.TabIndex = 27;
             // 
             // labelStepCount
             // 
             this.labelStepCount.AutoSize = true;
-            this.labelStepCount.Location = new System.Drawing.Point(17, 756);
+            this.labelStepCount.Location = new System.Drawing.Point(23, 937);
+            this.labelStepCount.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelStepCount.Name = "labelStepCount";
-            this.labelStepCount.Size = new System.Drawing.Size(119, 25);
+            this.labelStepCount.Size = new System.Drawing.Size(157, 32);
             this.labelStepCount.TabIndex = 28;
             this.labelStepCount.Text = "Step Count";
             // 
+            // comboBoxMicrostep
+            // 
+            this.comboBoxMicrostep.FormattingEnabled = true;
+            this.comboBoxMicrostep.Location = new System.Drawing.Point(12, 1118);
+            this.comboBoxMicrostep.Margin = new System.Windows.Forms.Padding(0);
+            this.comboBoxMicrostep.Name = "comboBoxMicrostep";
+            this.comboBoxMicrostep.Size = new System.Drawing.Size(185, 39);
+            this.comboBoxMicrostep.TabIndex = 29;
+            // 
+            // buttonChangeMicrostep
+            // 
+            this.buttonChangeMicrostep.Enabled = false;
+            this.buttonChangeMicrostep.Location = new System.Drawing.Point(229, 1118);
+            this.buttonChangeMicrostep.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonChangeMicrostep.Name = "buttonChangeMicrostep";
+            this.buttonChangeMicrostep.Size = new System.Drawing.Size(189, 50);
+            this.buttonChangeMicrostep.TabIndex = 30;
+            this.buttonChangeMicrostep.Text = "Change";
+            this.buttonChangeMicrostep.UseVisualStyleBackColor = true;
+            this.buttonChangeMicrostep.Click += new System.EventHandler(this.buttonChangeMicrostep_Click);
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1729, 1134);
+            this.ClientSize = new System.Drawing.Size(2305, 1406);
+            this.Controls.Add(this.buttonChangeMicrostep);
+            this.Controls.Add(this.comboBoxMicrostep);
             this.Controls.Add(this.labelStepCount);
             this.Controls.Add(this.textBoxStepCount);
             this.Controls.Add(this.labelPosition);
@@ -335,6 +368,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.buttonCapture);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -370,6 +404,8 @@
         private System.Windows.Forms.Label labelPosition;
         private System.Windows.Forms.TextBox textBoxStepCount;
         private System.Windows.Forms.Label labelStepCount;
+        private System.Windows.Forms.ComboBox comboBoxMicrostep;
+        private System.Windows.Forms.Button buttonChangeMicrostep;
     }
 
 }

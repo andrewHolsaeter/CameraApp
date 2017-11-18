@@ -103,6 +103,17 @@ namespace CameraApp
             comboBoxDirection.DataSource = new BindingSource(directions, null);
             comboBoxDirection.DisplayMember = "Value";
             comboBoxDirection.ValueMember = "Key";
+
+            Dictionary<int, string> microstepModes = new Dictionary<int, string>();
+            microstepModes.Add(1, "Full");
+            microstepModes.Add(2, "Half");
+            microstepModes.Add(4, "1/4");
+            microstepModes.Add(8, "1/8");
+            microstepModes.Add(16, "1/16");
+            microstepModes.Add(32, "1/32");
+            comboBoxMicrostep.DataSource = new BindingSource(microstepModes, null);
+            comboBoxMicrostep.DisplayMember = "Value";
+            comboBoxMicrostep.ValueMember = "Key";
         }
 
         private void testRefreshTimer_Tick(object sender, EventArgs e)
@@ -118,6 +129,7 @@ namespace CameraApp
                 if (!moving)
                 {
                     buttonTest.Enabled = true;
+                    buttonChangeMicrostep.Enabled = true;
                 }
             }
         }
@@ -402,6 +414,7 @@ namespace CameraApp
                 if (steps < 1 || steps > 2000) return;
                 if (speed <= 1 || speed >= 1900) return; //limits were determined from testing motor
                 buttonTest.Enabled = false;
+                buttonChangeMicrostep.Enabled = false;
                 stepperMotor.move(steps, direction, speed);
             }
             catch
@@ -441,6 +454,12 @@ namespace CameraApp
                 }
             }
 
+        }
+
+        private void buttonChangeMicrostep_Click(object sender, EventArgs e)
+        {
+            int microstep = (int)comboBoxMicrostep.SelectedValue;
+            stepperMotor.changeMicrostep(microstep);
         }
     }
 

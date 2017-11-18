@@ -15,7 +15,8 @@ namespace CameraApp
         STOP = 1,
         CALIBRATE = 2,
         MOVE = 3,
-        SLIDE = 4
+        SLIDE = 4,
+        CHANGEMICROSTEP = 5
     }
     public enum SendType
     {
@@ -128,6 +129,11 @@ namespace CameraApp
             int command = (int)CommandType.MOVE;
             string output = command + ";" + distance + ";" + direction + ";" + speed + ";";
             this.serialPortStepperMotor.WriteLine(output); 
+        }
+        public void changeMicrostep(int microstep)
+        {
+            int command = (int)CommandType.CHANGEMICROSTEP;
+            this.serialPortStepperMotor.WriteLine(command + ";" + microstep + ";");
         }
     }
 }

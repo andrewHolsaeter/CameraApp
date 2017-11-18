@@ -4,8 +4,11 @@
 #pragma region Pin Constants
 
 const int direction_wire1 = 3; 
-
-const int step_wire1 = 5;   
+const int step_wire1 = 5;
+//modes for setting the microstepping
+const int m_wire0 = 6;
+const int m_wire1 = 7; //only one connected
+const int m_wire2 = 8;
 
 #pragma endregion
 
@@ -35,7 +38,8 @@ enum commandType {
 	STOP = 1,
 	CALIBRATE = 2,
 	MOVE = 3,
-	SLIDE = 4
+	SLIDE = 4,
+	MICROSTEP = 5
 };
 commandType Command;
 
@@ -52,6 +56,7 @@ enum ActuatorDirectionCommand {
 ActuatorDirectionCommand cmdDirection;
 float cmdSpeed;
 float cmdDistance;
+int microstep;
 
 #define STEPS_PER_ROTATION 200 //steps per mm
 
@@ -85,12 +90,15 @@ public:
 void setup() {
 	pinMode(_directionPin, OUTPUT);
 	pinMode(_pulsePin, OUTPUT);
+	pinMode(m_wire0, OUTPUT);
+	pinMode(m_wire1, OUTPUT);
+	pinMode(m_wire2, OUTPUT);
 
 	digitalWrite(_directionPin, HIGH); //high = raise and "1" is raise
 	_direction = ActuatorDirectionCommand::UP;
 
 	_isSetup = true;
-
+	changeMicrostep(1);
 	speed = 800;
 	enableStepper = false;
 }
@@ -114,6 +122,49 @@ void moveDistance(float steps, ActuatorDirectionCommand dir, unsigned int freq)
 		digitalWrite(_directionPin, LOW);
 		break;
 	}
+}
+void changeMicrostep(int microstep)
+{
+	bool m0, m1, m2;
+	switch (microstep) {
+	case 1: //full step
+		m0 = LOW;
+		m1 = LOW;
+		m2 = LOW;
+		break;
+	case 2: //half step
+		m0 = HIGH;
+		m1 = LOW;
+		m2 = LOW;
+		break;
+	case 4: //quarter step
+		m0 = LOW;
+		m1 = HIGH;
+		m2 = LOW;
+		break;
+	case 8: 
+		m0 = HIGH;
+		m1 = HIGH;
+		m2 = LOW;
+		break;
+	case 16:
+		m0 = LOW;
+		m1 = LOW;
+		m2 = HIGH;
+		break;
+	case 32:
+		m0 = HIGH;
+		m1 = LOW;
+		m2 = HIGH;
+		break;
+	default:
+		m0 = LOW;
+		m1 = LOW;
+		m2 = LOW;
+	}
+	digitalWrite(m_wire0, m0);
+	digitalWrite(m_wire1, m1);
+	digitalWrite(m_wire2, m2);
 }
 void resetSteppers()
 {
@@ -190,7 +241,7 @@ Actuator act[1] = { Actuator(direction_wire1, step_wire1)
 unsigned long timer1_counter;
 unsigned int freq;
 
-void setup()
+void setup() 
 {
 	Serial.begin(9600); //experiment more with this. changing to 115200 drastically sped things up
 	act[0].setup();
@@ -251,6 +302,10 @@ void loop() {
 				startInterrupt(freq);
 			}
 		}
+		if (Command == commandType::MICROSTEP) {
+			act[0].changeMicrostep(microstep);
+		}
+		
 
 		else
 		{
@@ -369,6 +424,14 @@ void ReceiveData()
 			}
 			tmpspeed = read.substring(delim3Pos + 1, delim4Pos).toFloat();
 			break;
+		case commandType::MICROSTEP:
+			delim2Pos = read.indexOf(';', delim1Pos + 1);
+			if (delim2Pos == -1) {
+				return;  // panic
+			}
+			microstep = read.substring(delim1Pos + 1, delim2Pos).toFloat();
+			break;
+
 		}
 		cmdDistance = tmpdistance;
 		cmdDirection = tmpdirection;
