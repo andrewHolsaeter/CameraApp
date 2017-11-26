@@ -12,6 +12,8 @@ namespace CameraApp
 {
     static class Program
     {
+        //Source = Thomas Dideriksen
+        //https://sourceforge.net/projects/nikoncswrapper/
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
